@@ -34,7 +34,7 @@ func Default() *Config {
 		MySQL: &mySQL{
 			Host:     "127.0.0.1",
 			Port:     3306,
-			DB:       "test",
+			DB:       "go18",
 			Username: "root",
 			Password: "123456",
 			Debug:    true,

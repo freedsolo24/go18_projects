@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go18_projects/book/v2/config"
 	"net/http"
 	"os"
 	"strconv"
@@ -38,7 +39,20 @@ func (b *Book) TableName() string {
 }
 
 func setupDatabase() *gorm.DB {
-	dsn := "root:123456@tcp(127.0.0.1:3306)/go18?charset=utf8mb4&parseTime=True&loc=Local"
+	path := os.Getenv("CONFIG_PATH")
+	if path == "" {
+		path = "application.yaml"
+	}
+
+	mc := config.C().MySQL
+	// dsn := "root:123456@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		mc.Username,
+		mc.Password,
+		mc.Host,
+		mc.Port,
+		mc.DB,
+	)
 	// 连接go18库
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -237,6 +251,12 @@ func (h *BookApiHandler) DeleteBook(ctx *gin.Context) {
 
 func main() {
 
+	path := os.Getenv("CONFIG_PATH")
+	if path == "" {
+		path = "application.yaml"
+	}
+	config.LoadConfigFromYaml(path)
+
 	server_engine := gin.Default()
 
 	// Book RESTful API
@@ -254,7 +274,9 @@ func main() {
 	// Delete book
 	server_engine.DELETE("/api/books/:bn", h.DeleteBook)
 
-	if err := server_engine.Run(":8080"); err != nil {
+	ac := config.C().Application
+
+	if err := server_engine.Run(fmt.Sprintf("%s:%d", ac.Host, ac.Port)); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
