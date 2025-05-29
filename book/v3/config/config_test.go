@@ -2,7 +2,7 @@ package config_test
 
 import (
 	"fmt"
-	"go18_projects/book/v2/config"
+	"go18_projects/book/v3/config"
 	"os"
 	"testing"
 )

@@ -14,8 +14,25 @@ type BookApiHandler struct {
 
 var Book = &BookApiHandler{}
 
+func (h *BookApiHandler) Registry(r gin.IRouter) {
+	// // Book RESTful API
+	// // List book
+	r.GET("/api/books", h.listBook)
+
+	// // Create New book
+	r.POST("/api/books", h.createBook)
+
+	// // Get book by book number
+	// // :bn是uri中的路径变量
+	r.GET("/api/books/:bn", h.getBook)
+	// // Update book
+	r.PUT("/api/books/:bn", h.updateBook)
+	// // Delete book
+	r.DELETE("/api/books/:bn", h.deleteBook)
+}
+
 // 实现后端分页
-func (h *BookApiHandler) ListBook(ctx *gin.Context) {
+func (h *BookApiHandler) listBook(ctx *gin.Context) {
 
 	set := &models.BookSet{}
 
@@ -83,7 +100,7 @@ func (h *BookApiHandler) ListBook(ctx *gin.Context) {
 
 }
 
-func (h *BookApiHandler) CreateBook(ctx *gin.Context) {
+func (h *BookApiHandler) createBook(ctx *gin.Context) {
 	// POST数据放在body里. 通过标准库把body中的json串读取出来, 封装进payload变量
 	// if payload,err:=io.ReadAll(ctx.Request.Body); err != nil {
 	// 	ctx.JSON(400,gin.H{"code":400,"message":err.Error() })
@@ -125,7 +142,7 @@ func (h *BookApiHandler) CreateBook(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, bookInstance)
 }
 
-func (h *BookApiHandler) GetBook(ctx *gin.Context) {
+func (h *BookApiHandler) getBook(ctx *gin.Context) {
 	// 通过uri拿到bn, param返回的是字符串, 如果要数字还要自己转换
 	// bnStr := ctx.Param("bn")
 	// bn, err := strconv.ParseInt(bnStr, 10, 64)
@@ -144,7 +161,7 @@ func (h *BookApiHandler) GetBook(ctx *gin.Context) {
 	ctx.JSON(200, bookInstance)
 }
 
-func (h *BookApiHandler) UpdateBook(ctx *gin.Context) {
+func (h *BookApiHandler) updateBook(ctx *gin.Context) {
 	// 通过uri拿到bn
 	bnStr := ctx.Param("bn")
 	bn, err := strconv.ParseInt(bnStr, 10, 64)
@@ -171,7 +188,7 @@ func (h *BookApiHandler) UpdateBook(ctx *gin.Context) {
 	ctx.JSON(200, bookInstance)
 }
 
-func (h *BookApiHandler) DeleteBook(ctx *gin.Context) {
+func (h *BookApiHandler) deleteBook(ctx *gin.Context) {
 	// 通过uri拿到bn
 	// bnStr := ctx.Param("bn")
 	// bn, err := strconv.ParseInt(bnStr, 10, 64)
