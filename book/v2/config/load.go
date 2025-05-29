@@ -33,16 +33,15 @@ func (c *Config) String() string {
 
 // 加载配置 从configpath读取配置文件,
 // yaml 文件yaml --> conf
-func LoadConfigFromYaml(configPath string) *Config {
-	content, _ := os.ReadFile(configPath)
-	// if err != nil {
-	// 	return err
-	// }
+func LoadConfigFromYaml(configPath string) error {
+	content, err := os.ReadFile(configPath)
+	if err != nil {
+		return err
+	}
 
 	// 默认值
-	config = C()                    // 获取默认对象
-	yaml.Unmarshal(content, config) // 将yaml格式返序列化后,塞到config里面
-	return config
+	config = C()                           // 获取默认对象
+	return yaml.Unmarshal(content, config) // 将yaml格式返序列化后,塞到config里面
 }
 
 // 从环境变量读取配置, 在k8s中都是通过环境变量读取配置
